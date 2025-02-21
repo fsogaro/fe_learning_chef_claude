@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Ingredients from './Ingredients';
 import SubmitToChefBlock from './SubmitToChefBlock'; 
-import ReactMarkdown from "react-markdown";
 import getRecipeFromMistral from '../ai';
+import ChefAnswer from './Placeholder';
 
 
 
@@ -68,7 +68,7 @@ function Form() {
                     showCallChef && 
                     <SubmitToChefBlock getRecipe={getRecipe} /> 
                 }
-                {haveAnswer &&  <ReactMarkdown>{recipe}</ReactMarkdown>}
+                {haveAnswer &&  <ChefAnswer recipe={recipe}/>}
             </section>
             
             
