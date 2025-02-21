@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import Placeholder from './Placeholder';
 import Ingredients from './Ingredients';
 import SubmitToChefBlock from './SubmitToChefBlock'; 
+import ReactMarkdown from "react-markdown";
+import getRecipeFromMistral from '../ai';
+
 
 
 // State : something that within the component needs to change based on user input
@@ -20,39 +22,53 @@ import SubmitToChefBlock from './SubmitToChefBlock';
 
 function Form() {
     
-    const [ingredients, setIngredients] = useState([])
-    const [submittedToChef, setSubmittedToChef] = useState(false)
+    const [ingredients, setIngredients] = useState(["pasta", "tomato", "mozzarella", "crogettes"])
+    const [recipe, setRecipe] = useState("")
 
     const numIngredients = ingredients.length
     const showIngredients = numIngredients > 0
-    const showCallChef = numIngredients > 3
+    const showCallChef = numIngredients > 1
+    const haveAnswer = recipe != ""
 
-
-    function handleSubmitToChef() {
-         setSubmittedToChef(prevSub => !prevSub) 
+    async function getRecipe() {
+        const recipeMarkdown = await getRecipeFromMistral(ingredients)
+        setRecipe(recipeMarkdown)
     }
 
-
-    function handleSubmit(formData) {
-        const new_ingredient = formData.get("ingredient") // get the new ingredient based on name
-        const isNewItem = ingredients.includes(new_ingredient)
+    function addIngredient(formData) {
+        const newIngredient = formData.get("ingredient")
+        const isNewItem = ingredients.includes(newIngredient)
         if (!isNewItem){
-            setIngredients((prevIngredients) => [...prevIngredients, new_ingredient]) // this uses the prev state so must use callback!
+            setIngredients(
+                (prevIngredients) => [...prevIngredients, newIngredient]
+            ) // this uses the prev state so must use callback!
         }
-        console.log(ingredients)
     }
-    
+
+    console.log(recipe)
 
     return (
         <main>
-            <form className="form-container" action={handleSubmit}>
-                <input type="text" name="ingredient" aria-label='Add ingredient' required={true} placeholder="E.g origano" />
-                <button type="submit"> + Add Ingredient</button>
+            <form className="form-container" action={addIngredient}>
+                <input 
+                    type="text" 
+                    name="ingredient" 
+                    aria-label='Add ingredient' 
+                    required={true} 
+                    placeholder="E.g Origano" 
+                />
+                <button type="submit"> + Add Ingredient </button>
             </form>
             <section>
-                {showIngredients && <Ingredients ingredients={ingredients} />  } 
-                {showCallChef && <SubmitToChefBlock handleSubmitToChef={handleSubmitToChef} /> }
-                {submittedToChef && <Placeholder />}
+                {
+                    showIngredients && 
+                    <Ingredients ingredients={ingredients}/> 
+                 } 
+                {
+                    showCallChef && 
+                    <SubmitToChefBlock getRecipe={getRecipe} /> 
+                }
+                {haveAnswer &&  <ReactMarkdown>{recipe}</ReactMarkdown>}
             </section>
             
             

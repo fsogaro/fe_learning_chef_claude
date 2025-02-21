@@ -1,6 +1,6 @@
 
-export default function submittedToChefBlock(props) {
-
+export default function SubmitToChefBlock(props) {
+   
 
     return (
         <div className="get-recipe-container">
@@ -8,7 +8,13 @@ export default function submittedToChefBlock(props) {
                 <h3>Ready for a recipe?</h3>
                 <p>Generate a recipe from your list of ingredients.</p>
             </div>
-            <button onClick={props.handleSubmitToChef}>Get a recipe!</button>
+            <button 
+                // className={props.disabled ? "btn-disabled": "" }
+                // disabled={props.disabled}
+                onClick={props.getRecipe}
+            >
+                Get a recipe!
+            </button>
         </div>
     )
 }
