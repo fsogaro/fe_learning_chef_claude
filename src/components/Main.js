@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Ingredients from './Ingredients';
 import SubmitToChefBlock from './SubmitToChefBlock'; 
 import getRecipeFromMistral from '../ai';
@@ -24,11 +24,23 @@ function Form() {
     
     const [ingredients, setIngredients] = useState(["pasta", "tomato", "mozzarella", "crogettes"])
     const [recipe, setRecipe] = useState("")
+    const recipeSection = useRef(null)
+    console.log(recipeSection)
 
     const numIngredients = ingredients.length
     const showIngredients = numIngredients > 0
     const showCallChef = numIngredients > 1
-    const haveAnswer = recipe != ""
+    const haveAnswer = recipe !== ""
+
+
+    useEffect(() => {
+        console.log("in use Effect")
+        console.log(recipeSection)
+        if (recipeSection.current !== null  ){
+            recipeSection.current.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [recipe])
+
 
     async function getRecipe() {
         const recipeMarkdown = await getRecipeFromMistral(ingredients)
@@ -66,9 +78,9 @@ function Form() {
                  } 
                 {
                     showCallChef && 
-                    <SubmitToChefBlock getRecipe={getRecipe} /> 
+                    <SubmitToChefBlock ref={recipeSection} getRecipe={getRecipe} /> 
                 }
-                {haveAnswer &&  <ChefAnswer recipe={recipe}/>}
+                {haveAnswer &&  <ChefAnswer recipe={recipe} />}
             </section>
             
             
